@@ -31,7 +31,7 @@ python setup.py install
 
 **Supported versions as of 0.3.3** (offline tests pass with tox):
 
-* python 2.6
+* <del>python 2.6</del> removed due to deprecation
 * python 2.7
 * <del>python 3.2</del> removed due to python2/3 support
 * <del>python 3.3</del> removed due to deprecation
@@ -254,6 +254,12 @@ To test against all supported python versions, run:
 
 ```python
 tox
+```
+
+To check for possible vulnerabilities in python packages, run:
+
+```python
+safety check
 ```
 
 The project also supplies a small test suite to test against the live API at `test/live_test.py`. This suite is NOT run with `py.test` as it will permanently remove all resources related to an account. It should only be run with a throwaway dev-only account when preparing for a new release. It is not shipped with PyPI releases. See source code on how to run the live tests.
