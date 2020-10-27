@@ -25,30 +25,16 @@ class OperatingSystems(object):
     Helper class for dealing with operating system names.
     """
 
-    templates = {
-        'CentOS 6.10': '01000000-0000-4000-8000-000050010200',
-        'CentOS 7.6': '01000000-0000-4000-8000-000050010300',
-        'CentOS 8.0': '01000000-0000-4000-8000-000050010400',
-        'Debian 8.11': '01000000-0000-4000-8000-000020030100',
-        'Debian 9.9': '01000000-0000-4000-8000-000020040100',
-        'Debian 10.0': '01000000-0000-4000-8000-000020050100',
-        'Ubuntu 16.04': '01000000-0000-4000-8000-000030060200',
-        'Ubuntu 18.04': '01000000-0000-4000-8000-000030080200',
-        'Ubuntu 20.04': '01000000-0000-4000-8000-000030200200',
-        'CoreOS Stable 1068.8.0': '01000000-0000-4000-8000-000080010200',
-        'Windows 2016': '01000000-0000-4000-8000-000010060200',
-        'Windows 2019': '01000000-0000-4000-8000-000010070200',
-    }
-
     @classmethod
-    def get_OS_UUID(cls, os):
+    def get_OS_UUID(cls, os, cloud_manager):
         """
         Validate Storage OS and its UUID.
 
         If the OS is a custom OS UUID, don't validate against templates.
         """
-        if os in cls.templates:
-            return cls.templates[os]
+        templates = cls.get_templates(cloud_manager)
+        if os in templates:
+            return templates[os]
 
         uuid_regexp = '^[0-9a-z]{8}-[0-9a-z]{4}-[0-9a-z]{4}-[0-9a-z]{4}-[0-9a-z]{12}$'
         if re.search(uuid_regexp, os):
@@ -61,3 +47,11 @@ class OperatingSystems(object):
             "'Ubuntu 12.04', 'Ubuntu 16.04', 'Ubuntu 18.04', 'Ubuntu 20.04', "
             "'Windows 2016', 'Windows 2019'"
         ))
+
+    @classmethod
+    def get_templates(cls, cloud_manager):
+        templates = {}
+        storages = cloud_manager.get_storages(storage_type='template')
+        for storage in storages:
+            templates.update({storage.title: storage.uuid})
+        return templates
